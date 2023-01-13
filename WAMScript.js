@@ -1325,7 +1325,7 @@ function DoSelfAssign() {
               default:
                 AppendRunLog("Subcategory is blank, but Category is not matched. Category:" + sCategory);
                 return;
-                break;
+     
             }
             MainWin.g_form.flash("sub_category", "#00CC00", 0); //Flash
 
@@ -1346,7 +1346,7 @@ function DoSelfAssign() {
               default:
                 AppendRunLog("Subcategory is blank, but Category is not matched. Category:" + sCategory);
                 return;
-                break;
+          
             }
           }
         }
@@ -1425,7 +1425,7 @@ function DoWorkflow() {  // BG - This method shouldn't be executed if the Window
     case "Tenet":
       WorkflowTenet(); //For Tenet UpdateWorkflowLog() next step is called in function itself on account of asynchronous form updates
       return;
-      break;
+      
     case "Tollbrothers": WorkflowTollBrothers(); break;
     case "TxDOT": WorkflowTxDOT(); break;
     case "TxDOT - NOW": WorkflowTxDOTNow(); break;
@@ -2048,7 +2048,7 @@ function ProcessAssignment() {
       AppendRunLog("LogAssign() called.");
       LogAssign();
       return;
-      break;
+    
       case "Worley":
         arrExcludeStatesInc = ["6", "7"];
         arrExcludeStatesTask = ["3", "4","7"];
@@ -3808,7 +3808,7 @@ function WorkflowTenet() {
           default:
             AppendRunLog("Subcategory is blank, but Category is not matched. Category:" + sCategory);
             return;
-            break;
+      
         }
         MainWin.g_form.flash("sub_category", "#00CC00", 0); //Flash
 
@@ -3828,7 +3828,7 @@ function WorkflowTenet() {
           default:
             AppendRunLog("Subcategory is blank, but Category is not matched. Category:" + sCategory);
             return;
-            break;
+ 
         }
       }
 

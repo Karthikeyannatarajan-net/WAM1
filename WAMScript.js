@@ -1447,7 +1447,15 @@ function FieldComparison(oVariable, sField) {
     sUpdatedFieldList += sField + ";";
   }
 
-  eval(sName + " = '" + sCurValue + "';");
+  var myobj = {sName : Object.keys(oVariable)[0], sCurValue : MainWin.g_form.getValue(sField)};
+
+var dynamicProperty1 = 'sName';
+var dynamicProperty2 = 'sCurValue';
+
+//gives 15.
+AppendRunLog( myobj[dynamicProperty1] + myobj[dynamicProperty2] );
+
+ // eval(sName + " = '" + sCurValue + "';");
 }
 
 /*

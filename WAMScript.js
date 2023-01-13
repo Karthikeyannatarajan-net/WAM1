@@ -7,7 +7,7 @@ if (typeof gel !== 'function') { window.gel = function (sInput) { return documen
 /*Constants*/
 
 var cnt = 0;
-var sAutoVer = "601-UC"; //Not expected to actually run queries correctly yet - See Line 2521
+const sAutoVer = "601-UC"; //Not expected to actually run queries correctly yet - See Line 2521
 var sNTTAPIURL = OutSysEnv + "/DWSUtilitiesHubAPI/";
 var sImagePath = OutSysEnv + "/DWSUtilitiesScript/img/DWSUtilitiesScript.";
 var sNTTScriptPath = OutSysEnv + "/DWSUtilitiesScript/";
@@ -468,7 +468,7 @@ function CheckTablePeg() {
   var arrIncRows = [];
   var arrTaskRows = [];
   var arrIncCells = [];
-  var arrTaskCells = [];
+
   var sTicketURL = "";
   var NONLOAD_MS = 250;
   var RELOAD_MS = 30000;
@@ -1315,7 +1315,7 @@ function DoSelfAssign() {
             return (sCategory != "" && sSubCat != "[Blank]");
           }, function () {
             var sCategory = MainWin.g_form.getValue("category");
-            var sSubCat = MainWin.g_form.getValue("subcategory");
+            
             switch (sCategory) {
               case "Application/Software": MainWin.g_form.setValue("subcategory", "Operations"); break;
               case "Printer": MainWin.g_form.setValue("subcategory", "Multi-Function/Scanner/Printer/Fax"); break;
@@ -1943,14 +1943,12 @@ function ProcessAssignment() {
   var arrExcludeStatesChange = []; //TxDOT
   var arrExcludeStatesCTask = []; //TxDOT
   var arrExcludeStatesMTask = []; //TxDOT - NOW
-  var arr
   var sIncStateField = "state";
   var sTaskStateField = "state";
   var sMoveStateField = "state";
   var i; //Used for two for loops
-  var i2;
   var sOrigDescriptionField = "";
-  var bFound = false;
+
 
   switch (sAccount) {
     case "AIG":
@@ -2437,7 +2435,7 @@ function StartGroupQuery() {
 }
 
 function StartQuery() {
-  var url = "";
+
   var sPPMOverride = "false";
   var sPPMInEffect = "false";
   var sAvailableField = "";
@@ -2716,7 +2714,7 @@ function UpdateBlankPriorityFields() {
 function UpdateWorkflowLog() {
   var dEndDate = new Date();
   var nCalcTOT = dEndDate - dCurDate;
-  var sUpdateURL = "";
+
   var sTicketURL = "";
   var sLogType = "Workflow";
   var sCurAssGroup = "";
@@ -2873,8 +2871,8 @@ function VarReset() {
 }
 
 function WorkflowAIG() {
-  var sReqByPhone = "";
-  var sReqForPhone = "";
+ 
+ 
   var elAdd = null;
   AppendRunLog("Updating ticket...");
   AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
@@ -3042,8 +3040,8 @@ function WorkflowBomb() {
 
 
 function WorkflowBanamex() {
-  var sReqByPhone = "";
-  var sReqForPhone = "";
+
+
   var sSymptom = "";
   var elAdd = null;
   AppendRunLog("Updating ticket...");
@@ -3167,7 +3165,7 @@ function WorkflowCAT() {
 
 function WorkflowCorteva(bHardQuery) {
   var strDescBuffer = "";
-  var strADAC = " ADAC";
+ 
   var fortnightAway = new Date(Date.now() + 12096e5);
   var NewDate = "";
   NewDate = SetTwoWeeks(fortnightAway);
@@ -3265,7 +3263,7 @@ function WorkflowCSMC() {
 
 function WorkflowFifthThird(bHardQuery) {
   var strDescBuffer = "";
-  var strADAC = " ADAC";
+  
   var fortnightAway = new Date(Date.now() + 12096e5);
   var NewDate = "";
 
@@ -3414,10 +3412,10 @@ function WorkflowGuardian() {
 }
 
 function WorkflowMagellan() {
-  var sReqByPhone = "";
-  var sReqForPhone = "";
-  var sSymptom = "";
-  var elAdd = null;
+
+
+
+
   AppendRunLog("Updating ticket...");
   AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
   AppendRunLog("MainWin:" + String(MainWin));
@@ -3470,10 +3468,10 @@ function WorkflowMagellan() {
 }
 
 function WorkflowNovelis(sAssignID) {
-  var sReqByPhone = "";
-  var sReqForPhone = "";
-  var sSymptom = "";
-  var elAdd = null;
+ 
+
+
+
   AppendRunLog("Updating ticket...");
   AppendRunLog("sAssignID:" + sAssignID);
   AppendRunLog("MainWin:" + String(MainWin));
@@ -3576,9 +3574,9 @@ function WorkflowIHA() {
 
 function WorkflowMedStar() {
   var strDescBuffer = "";
-  var strADAC = " ADAC";
+
   var sCategory = "";
-  var sSubCategory = "";
+
 
   AppendRunLog("Updating ticket...");
   AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
@@ -3806,7 +3804,7 @@ function WorkflowTenet() {
         return (sCategory != "" && sSubCat != "[Blank]");
       }, function () {
         var sCategory = MainWin.g_form.getValue("category");
-        var sSubCat = MainWin.g_form.getValue("subcategory");
+        
         switch (sCategory) {
           case "Application/Software": MainWin.g_form.setValue("subcategory", "Operations"); break;
           case "Printer": MainWin.g_form.setValue("subcategory", "Multi-Function/Scanner/Printer/Fax"); break;
@@ -3952,8 +3950,8 @@ function WorkflowTxDOT() {
 }
 
 function WorkflowTxDOTNow() {
-  var sReqByPhone = "";
-  var sReqForPhone = "";
+
+
   var sSymptom = "";
   var elAdd = null;
   AppendRunLog("Updating ticket...");
@@ -4033,7 +4031,7 @@ function WorkflowUSBSVC() {
 function WorkflowUSBank() {
   var elAdd = null;
   var btnUpdate;
-  var i;
+
   var sCategory = "";
 
   AppendRunLog("Updating ticket...");
@@ -4114,7 +4112,7 @@ function WorkflowUSBank() {
 function SendValue(sFieldName, sValue) {
   var sGREEN = "#00C00";
   var sREADONLY_PREFIX = "sys_readonly.";
-  var sSELECTTAG = "SELECT";
+
 
   if (MainWin.g_form.getControl(sFieldName)) {
     if (MainWin.gel(sREADONLY_PREFIX + MainWin.g_form.getControl(sFieldName).id)) {
@@ -4142,8 +4140,8 @@ function AbortField(sFieldName) {
 
 function WorkflowWEST() {
   var FirstName;
-  var sSchedDesc = "";
-  var btnUpdate;
+
+
 
   MainWin.g_form.setValue("assigned_to", TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
 
@@ -4231,7 +4229,7 @@ function WorkflowWorley() {
 function SendValue(sFieldName, sValue) {
   var sGREEN = "#00C00";
   var sREADONLY_PREFIX = "sys_readonly.";
-  var sSELECTTAG = "SELECT";
+ 
 
   if (MainWin.g_form.getControl(sFieldName)) {
     if (MainWin.gel(sREADONLY_PREFIX + MainWin.g_form.getControl(sFieldName).id)) {

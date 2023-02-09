@@ -7,11 +7,11 @@ if (typeof gel !== 'function') { window.gel = function (sInput) { return documen
 /*Constants*/
 
 var cnt = 0;
-var sAutoVer = "603-UC"; //Not expected to actually run queries correctly yet - See Line 2521
+var sAutoVer = "610-UC"; //Not expected to actually run queries correctly yet - See Line 2521
 var sNTTAPIURL = OutSysEnv + "/DWSUtilitiesHubAPI/";
 var sImagePath = OutSysEnv + "/DWSUtilitiesScript/img/DWSUtilitiesScript.";
 var sNTTScriptPath = OutSysEnv + "/DWSUtilitiesScript/";
-var sINCQuery = "Incident,INC-REQ,Remote Resolution,Site Lead - INC";
+var sINCQuery = "Incident,INC-REQ";
 var sREQQuery = "Scheduler";
 var sREQGenQuery = "INC-REQ,Request";
 var sStagingQuery = "Staging";
@@ -22,8 +22,7 @@ var MainWin = FindMainWin();
 var sHostname = window.location.hostname;
 var sDevEmail = "jonathan.lee@nttdata.com";
 /*Constants conditionally set one time at start of script*/
-var sAccount = "";
-//if (sAccount === null) { var sAccount = ""; }
+if (sAccount === null) { var sAccount = ""; }
 var sJQUIURL = "";
 var sJQUICSSURL = "";
 var sLoadTrack = "";
@@ -85,29 +84,9 @@ var sToolLogInfo = "";
 /*JSON Return Objects*/
 var TechnicianAssignmentByAccountJSON = "";
 var RoleMatchMatrixByAccountJSON = "";
-var GroupMatchMatrixByAccountJSON = "";
+//var GroupMatchMatrixJSON = "";
 
-var deltaX;
-var deltaY;
-var DragElem;
-var origOnMouseMove;
-var origOnMouseUp; 
-
-/*Timing Constants*/
-var SECONDS_IN_MINUTE = 60;
-var MS_IN_SECOND = 1000;
-var RELOAD_SECONDS = 9; //Number of seconds that should elapse before this routine calls itself again with SetTimeout
-var NONLOAD_MS = 250;
-var RELOAD_MS = RELOAD_SECONDS * MS_IN_SECOND; //RELOAD_SECONDS converted to milliseconds
-var STUCK_WAIT_MINUTES = 5;
-var STUCK_WAIT_SECONDS = STUCK_WAIT_MINUTES * SECONDS_IN_MINUTE;
-var STUCK_WAIT_MS = STUCK_WAIT_SECONDS * MS_IN_SECOND;
-var STUCK_FIVE_MINUTE_MARK = parseInt((STUCK_WAIT_MS / NONLOAD_MS) / 3) //Stuck counter is incremented every *third* time update button is found (0,1,2)
-var CHECKS_PER_SECOND = MS_IN_SECOND / NONLOAD_MS;
-var ERROR_RELOAD_TRIGGER = CHECKS_PER_SECOND * RELOAD_SECONDS; //Number of error counts encountered that should trigger a page reload
-var ERROR_NOTIFICATION_TRIGGER = CHECKS_PER_SECOND * 300; //Number of error counts that should trigger an error notification (300 seconds in 5 minutes)
-var WFUPDATE_INTERVAL_MS = 1800000; //30 minutes
-var MAIL_INTERVAL_MS = 1800000; //30 minutes
+var GroupMatchMatrixJSON="";
 
 /*US Bank vars*/
 var sUserEmail = "";
@@ -120,23 +99,26 @@ if (sHostname.search("service-now") > -1) { isTicketingToolEnv = true; }
 
 //if (sHostname.search("aig") > -1) sAccount = "AIG";
 if (sHostname.search("amgen") > -1) sAccount = "AMGEN";
-if (sHostname.search("ascension") > -1) sAccount = "AMITA";
-if (sHostname.search("bombardier") > -1) sAccount = "Bombardier";
-if (sHostname.search("citigroup") > -1) sAccount = "Banamex";
-if (sHostname.search("csmc") > -1) sAccount = "Cedars-Sinai";
-if (sHostname.search("corteva") > -1) sAccount = "Corteva";
-if (sHostname.search("grupobimbo") > -1) sAccount = "Grupo Bimbo";
-if (sHostname.search("guardian") > -1) sAccount = "Guardian";
-if (sHostname.search("magellan") > -1) sAccount = "Magellan";
-if (sHostname.search("novelis") > -1) sAccount = "Novelis";
-if (sHostname.search("suncoke") > -1) sAccount = "SunCoke Energy";
-if (sHostname.search("tenet") > -1) sAccount = "Tenet";
-if (sHostname.search("tollbrothers") > -1) { sAccount = "Tollbrothers"; }
-if (sHostname.search("pegasus") > -1) sAccount = "Vanderbilt";
-if (sHostname.search("healthbc") > -1) sAccount = "WEST";
-if (sHostname.search("txdot") > -1) sAccount = "TxDOT - NOW";
-if (sHostname.search("itsmnow") > -1) { sAccount = "US Bank"; }
+//if (sHostname.search("ascension") > -1) sAccount = "AMITA";
+//if (sHostname.search("bombardier") > -1) sAccount = "Bombardier";
+//if (sHostname.search("citigroup") > -1) sAccount = "Banamex";
+//if (sHostname.search("csmc") > -1) sAccount = "Cedars-Sinai";
+//if (sHostname.search("corteva") > -1) sAccount = "Corteva";
+//if (sHostname.search("grupobimbo") > -1) sAccount = "Grupo Bimbo";
+//if (sHostname.search("guardian") > -1) sAccount = "Guardian";
+//if (sHostname.search("magellan") > -1) sAccount = "Magellan";
+//if (sHostname.search("novelis") > -1) sAccount = "Novelis";
+//if (sHostname.search("suncoke") > -1) sAccount = "SunCoke Energy";
+//if (sHostname.search("tenet") > -1) sAccount = "Tenet";
+//if (sHostname.search("tollbrothers") > -1) { sAccount = "Tollbrothers"; }
+//if (sHostname.search("pegasus") > -1) sAccount = "Vanderbilt";
+//if (sHostname.search("healthbc") > -1) sAccount = "WEST";
+//if (sHostname.search("txdot") > -1) sAccount = "TxDOT - NOW";
+//if (sHostname.search("itsmnow") > -1) { sAccount = "US Bank"; }
 if (sHostname.search("Worley") > -1) { sAccount = "Worley"; }
+if (sHostname.search("ingredion") > -1) { sAccount = "Ingredion"; }
+if (sHostname.search("arca") > -1) { sAccount = "Arca Continental"; }
+if (sHostname.search("conifer") > -1) { sAccount = "Conifer"; }
 
 if (sHostname.search("nttds") > -1) {
   oSelDom = document.getElementsByClassName("navpage-pickers navpage-header-content hidden-xs hidden-sm hidden-md").item(0).innerText.trim();
@@ -197,7 +179,6 @@ function AppendRunLog(sInput) {
   oLogText.readOnly = true;
 }
 
-/*
 function AssignToOpener() {
   var grTask = null;
   var grUser = null;
@@ -212,50 +193,12 @@ function AssignToOpener() {
     sAssHex = gr.sys_id;
   }
   UpdateWorkflowLog();
-}*/
-function MouseMoveOverride(e) {
-  if (!e) e = window.event;
-  DragElem.getElementsByClassName("SNAPWinTitle")[0].style.cursor = "grabbing";
-  DragElem.style.left = (e.clientX - deltaX) + "px";
-  DragElem.style.top = (e.clientY - deltaY) + "px";
-  if (e.stopPropagation) {
-    e.stopPropagation();
-  } else {
-    e.cancelBubble = true;
-  }
 }
 
-function MouseUpOverride(e) {
-  if (!e) e = window.event;
-  DragElem.getElementsByClassName("SNAPWinTitle")[0].style.cursor = "grab";
-  if (document.removeEventListener) {
-    document.removeEventListener("mouseup", MouseUpOverride, true);
-    document.removeEventListener("mousemove", MouseMoveOverride, true);
-  }
-  else if (document.detachEvent) {
-    document.detachEvent("onmouseup", MouseUpOverride);
-    document.detachEvent("onmousemove", MouseMoveOverride);
-  }
-  else {
-    document.onmouseup = origOnMouseUp;
-    document.onmousemove = origOnMouseMove;
-  }
-  /*Save Pop Window position when it is done being dragged*/
-  if (DragElem.id == "DispatchWindow") {
-    localStorage.setItem("sADWinLeft", DragElem.style.left);
-    localStorage.setItem("sADWinTop", DragElem.style.top);
-  }
-  if (e.stopPropagation) {
-    e.stopPropagation();
-  } else {
-    e.cancelBubble = true;
-  }
-}
 
-function beginADWinDrag(MouseDownEvent) {
-
-   deltaX = MouseDownEvent.clientX - parseInt(DragElem.style.left);
-   deltaY = MouseDownEvent.clientY - parseInt(DragElem.style.top);
+function beginADWinDrag(DragElem, MouseDownEvent) {
+  var deltaX = MouseDownEvent.clientX - parseInt(DragElem.style.left);
+  var deltaY = MouseDownEvent.clientY - parseInt(DragElem.style.top);
 
   if (document.addEventListener) {
     document.addEventListener("mousemove", MouseMoveOverride, true);
@@ -266,8 +209,8 @@ function beginADWinDrag(MouseDownEvent) {
     document.attachEvent("onmousemove", MouseMoveOverride);
     document.attachEvent("onmouseup", MouseUpOverride);
   } else {
-    origOnMouseMove = document.onmousemove;
-    origOnMouseUp = document.onmouseup;
+    var origOnMouseMove = document.onmousemove;
+    var origOnMouseUp = document.onmouseup;
     document.onmousemove = MouseMoveOverride;
     document.onmouseup = MouseUpOverride;
   }
@@ -284,16 +227,75 @@ function beginADWinDrag(MouseDownEvent) {
     MouseDownEvent.returnValue = false;
   }
 
+  function MouseMoveOverride(e) {
+    if (!e) e = window.event;
+    DragElem.getElementsByClassName("SNAPWinTitle")[0].style.cursor = "grabbing";
+    DragElem.style.left = (e.clientX - deltaX) + "px";
+    DragElem.style.top = (e.clientY - deltaY) + "px";
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+  }
 
+  function MouseUpOverride(e) {
+    if (!e) e = window.event;
+    DragElem.getElementsByClassName("SNAPWinTitle")[0].style.cursor = "grab";
+    if (document.removeEventListener) {
+      document.removeEventListener("mouseup", MouseUpOverride, true);
+      document.removeEventListener("mousemove", MouseMoveOverride, true);
+    }
+    else if (document.detachEvent) {
+      document.detachEvent("onmouseup", MouseUpOverride);
+      document.detachEvent("onmousemove", MouseMoveOverride);
+    }
+    else {
+      document.onmouseup = origOnMouseUp;
+      document.onmousemove = origOnMouseMove;
+    }
+    /*Save Pop Window position when it is done being dragged*/
+    if (DragElem.id == "DispatchWindow") {
+      localStorage.setItem("sADWinLeft", DragElem.style.left);
+      localStorage.setItem("sADWinTop", DragElem.style.top);
+    }
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+  }
 }
 
 function CheckTable() {
+  var elTicketBody;
+  var arrRows;
   var nID;
   var sErrMsg = "";
+  var MS_IN_SECOND = 1000;
+  var SECONDS_IN_MINUTE = 60;
+  var RELOAD_SECONDS = 9; //Number of seconds that should elapse before this routine calls itself again with SetTimeout
+  var NONLOAD_MS = 250;
+  var RELOAD_MS = RELOAD_SECONDS * MS_IN_SECOND; //RELOAD_SECONDS converted to milliseconds
+  var STUCK_WAIT_MINUTES = 5;
+  var STUCK_WAIT_SECONDS = STUCK_WAIT_MINUTES * SECONDS_IN_MINUTE;
+  var STUCK_WAIT_MS = STUCK_WAIT_SECONDS * MS_IN_SECOND;
+  var STUCK_FIVE_MINUTE_MARK = parseInt((STUCK_WAIT_MS / NONLOAD_MS) / 3) //Stuck counter is incremented every *third* time update button is found (0,1,2)
+  var CHECKS_PER_SECOND = MS_IN_SECOND / NONLOAD_MS;
+  var ERROR_RELOAD_TRIGGER = CHECKS_PER_SECOND * RELOAD_SECONDS; //Number of error counts encountered that should trigger a page reload
+  var ERROR_NOTIFICATION_TRIGGER = CHECKS_PER_SECOND * 300; //Number of error counts that should trigger an error notification (300 seconds in 5 minutes)
+  var WFUPDATE_INTERVAL_MS = 1800000; //30 minutes
   var dNow = new Date();
   //var sCurGroup = "";
   //var sCurNumber = "";
+  var MAIL_INTERVAL_MS = 1800000; //30 minutes
   var MaildNow = new Date();
+  
+  if (sAccount == "AIG") {
+    RELOAD_SECONDS = 9;
+    RELOAD_MS = RELOAD_SECONDS * 1000;
+    ERROR_RELOAD_TRIGGER = CHECKS_PER_SECOND * RELOAD_SECONDS;
+  }
 
   if (!gel("chkRun").checked) return;
 
@@ -302,12 +304,15 @@ function CheckTable() {
   localStorage.setItem("sADLogUpdate", "CheckTable() - " + dNow.toString());
 
   try {
-    AppendRunLog("Checking WAM BOT Status");
+
+    /*AppendRunLog("Checking WAM BOT Status");
+  
     if (MaildNow.getTime() > (MailWFUpdate.getTime() + MAIL_INTERVAL_MS)) {
-      //EmailNotification("WAM BOT is Running - "+ MaildNow.toString(),"WAM BOT");
-      AppendRunLog("Mail Trigged WAM BOT Status");
-      MailWFUpdate=MaildNow;
-    }
+         EmailNotification("WAM BOT is Running - "+ MaildNow.toString(),"WAM BOT");
+         AppendRunLog("Mail Trigged WAM BOT Status");
+         MailWFUpdate=MaildNow;
+        }*/
+
 
     if(gel("request_status_message").innerText.indexOf("Running") > -1) {
       AppendRunLog("A transaction appears to be running. Non-load re-check...");
@@ -347,10 +352,132 @@ function CheckTable() {
     CheckTablePeg(); //Under construction
     return;
   }
-  
-  if(!CheckTableStuck()) return;
-  
-  CheckTableTickets();
+
+
+  btnUpdate = MainWin.document.getElementById("sysverb_update");
+
+ /*if(sAccount = "Arca Continental")
+ {
+    if (btnUpdate) setTimeout(function () { btnUpdate.click(); }, 2000);
+ }*/
+
+  if(!btnUpdate) btnUpdate = MainWin.document.getElementById("sysverb_update_and_stay");
+  elTicketBody = MainWin.document.getElementsByTagName("tbody");
+
+  if (btnUpdate) {
+    if (nUpdateFound > 1) {
+      nUpdateFound = 0;
+      oStuckCount[sQueueURL] = oStuckCount[sQueueURL] || 0;
+      oStuckCount[sQueueURL]++;
+      if (oStuckCount[sQueueURL] == 1) {
+        /*This is probably not necessary*/
+        //sCurNumber = MainWin.g_form.getValue("number");
+        //sCurGroup = MainWin.g_form.getDisplayBox("assignment_group").value;
+        //if(sNumber == sCurNumber && sAssGroup != sCurGroup) {
+        //  AppendRunLog("Assignment group mismatch on same ticket. Simultaneous update condition may exist. Attempting queue reload.");
+        //  MainWin.location.href = sOrigQueueURL;
+        //}
+        AppendRunLog("Found update button too many times; clicking it.");
+
+       /*  if(sAccount = "Arca Continental")
+        {
+            if (btnUpdate) setTimeout(function () { btnUpdate.click(); }, 2000);
+        }
+        else*/
+        btnUpdate.click();
+
+      } else {
+        AppendRunLog("Attempting queue reload.");
+        MainWin.location.href = sOrigQueueURL;
+      }
+      if (oStuckCount[sQueueURL] > STUCK_FIVE_MINUTE_MARK) {
+        oStuckCount[sQueueURL] = 0;
+        TriggerErrorNotification("Script appears to have been stuck on the same page for over 5 minutes." + TicketSNErrors());
+      }
+    } else {
+      AppendRunLog("Found update button. Exiting CheckTable()");
+      AppendRunLog("Main Window: " + MainWin.toString());
+      nUpdateFound++;
+    }
+    /*Still on ticket so cancel*/
+    AppendRunLog("NONLOAD_MS:" + String(NONLOAD_MS));
+    setTimeout(CheckTable, NONLOAD_MS);
+    return;
+  }
+
+  if (bReloadQueue) {
+    AppendRunLog("Initial queue reload called.");
+    MainWin.location.href = sOrigQueueURL;
+    AppendRunLog("RELOAD_MS:" + String(RELOAD_MS));
+    setTimeout(CheckTable, RELOAD_MS);
+    bReloadQueue = false;
+    return;
+  }
+
+  nCheckTableErrCount = 0;
+  nUpdateFound = 0;
+  oStuckCount = {};
+
+  if (elTicketBody.length > 0) {
+    for (var i = 0; i < elTicketBody.length; i++) {
+      if (elTicketBody[i].className.substr(0, 4) == "list" && elTicketBody[i].className.substr(-4, 4) == "body") nID = i;
+    }
+    if (elTicketBody[nID]) {
+      arrRows = elTicketBody[nID].getElementsByTagName("tr");
+    } else {
+      AppendRunLog("Problem enumerating rows. Reloading page, recalling setTimeOut on CheckTable, and returning early.");
+      MainWin.location.reload();
+      AppendRunLog("RELOAD_MS:" + String(RELOAD_MS));
+      setTimeout(CheckTable, RELOAD_MS);
+      return;
+    }
+    if (arrRows.length > 0) {
+      if (arrRows[0].className.includes("no") && arrRows[0].className.includes("records")) {
+        AppendRunLog("# of Tickets Found: 0");
+        elTicketBody[0].parentNode.removeChild(elTicketBody[0]);
+        MainWin.location.reload();
+      } else {
+
+        sToolLogInfo="";
+        AppendRunLog("# of Tickets Found: " + String(arrRows.length));
+        AppendRunLog("Checking first ticket...");
+
+        AppendToolLog("# of Tickets Found: " + String(arrRows.length));
+        AppendToolLog("Checking first ticket...");
+
+        //Need to keep from renavigating to older tickets
+        //if(arrRows[0].getElementsByTagName("td")[2].getElementsByTagName("a")[0].innerHTML == sNumber){
+        arrRows[0].getElementsByTagName("td")[2].getElementsByTagName("a")[0].click();
+        MainWin.alert = function (sInput) { MainWin.g_form.addInfoMessage(sInput); };
+        window.alert = function () { return false; };
+        AppendRunLog("Overriding MainWin.alert");
+        AppendRunLog("Proceeding to CheckTicket and returning, without re-firing.");
+        AppendRunLog("RELOAD_MS:" + String(RELOAD_MS));
+        nGetTicketRun = 0;
+        nCountTicketRun = 0;
+        setTimeout(CheckTicket, RELOAD_MS);
+        return;
+      }
+    } else {
+      AppendRunLog("# of Tickets Found: 0");
+      elTicketBody[0].parentNode.removeChild(elTicketBody[0]);
+      MainWin.location.reload();
+    }
+    nCheckTableErrCount = 0;
+  } else {
+    sErrMsg = "Error finding tbody element. Script may be stuck on a non-queue page.";
+    AppendRunLog(sErrMsg);
+    bReloadQueue = true;
+    if (nCheckTableErrCount > ERROR_NOTIFICATION_TRIGGER) {
+      TriggerErrorNotification(sErrMsg);
+      nCheckTableErrCount = 0;
+    }
+    nCheckTableErrCount++;
+  }
+
+  /*Restart process to check again*/
+  AppendRunLog("RELOAD_MS:" + String(RELOAD_MS));
+  setTimeout(CheckTable, RELOAD_MS);
 }
 
 
@@ -360,7 +487,7 @@ function CheckTablePeg() {
   var arrIncRows = [];
   var arrTaskRows = [];
   var arrIncCells = [];
-
+  var arrTaskCells = [];
   var sTicketURL = "";
   var NONLOAD_MS = 250;
   var RELOAD_MS = 30000;
@@ -441,134 +568,6 @@ function CheckTablePeg() {
   }
 }
 
-
-
-function CheckTableStuck()
-{
-  btnUpdate = MainWin.document.getElementById("sysverb_update");
-  if(!btnUpdate) btnUpdate = MainWin.document.getElementById("sysverb_update_and_stay");
-
-  if (btnUpdate) {
-    if (nUpdateFound > 1) {
-      nUpdateFound = 0;
-      oStuckCount[sQueueURL] = oStuckCount[sQueueURL] || 0;
-      oStuckCount[sQueueURL]++;
-      if (oStuckCount[sQueueURL] == 1) {
-        /*This is probably not necessary*/
-        //sCurNumber = MainWin.g_form.getValue("number");
-        //sCurGroup = MainWin.g_form.getDisplayBox("assignment_group").value;
-        //if(sNumber == sCurNumber && sAssGroup != sCurGroup) {
-        //  AppendRunLog("Assignment group mismatch on same ticket. Simultaneous update condition may exist. Attempting queue reload.");
-        //  MainWin.location.href = sOrigQueueURL;
-        //}
-        AppendRunLog("Found update button too many times; clicking it.");
-        btnUpdate.click();
-      } else {
-        AppendRunLog("Attempting queue reload.");
-        MainWin.location.href = sOrigQueueURL;
-      }
-      if (oStuckCount[sQueueURL] > STUCK_FIVE_MINUTE_MARK) {
-        oStuckCount[sQueueURL] = 0;
-        TriggerErrorNotification("Script appears to have been stuck on the same page for over 5 minutes." + TicketSNErrors());
-      }
-    } else {
-      AppendRunLog("Found update button. Exiting CheckTable()");
-      AppendRunLog("Main Window: " + MainWin.toString());
-      nUpdateFound++;
-    }
-    /*Still on ticket so cancel*/
-    AppendRunLog("NONLOAD_MS:" + String(NONLOAD_MS));
-    setTimeout(CheckTable, NONLOAD_MS);
-    return false;
-  }
-
-  if (bReloadQueue) {
-    AppendRunLog("Initial queue reload called.");
-    MainWin.location.href = sOrigQueueURL;
-    AppendRunLog("RELOAD_MS:" + String(RELOAD_MS));
-    setTimeout(CheckTable, RELOAD_MS);
-    bReloadQueue = false;
-    return false;
-  }
-
-  nCheckTableErrCount = 0;
-  nUpdateFound = 0;
-  oStuckCount = {};
-}
-
-
-
-function CheckTableTickets()
-{
-  var elTicketBody;
-  var arrRows;
-  
-  elTicketBody = MainWin.document.getElementsByTagName("tbody");
-  
-  if (elTicketBody.length > 0) {
-    for (var i = 0; i < elTicketBody.length; i++) {
-      if (elTicketBody[i].className.substring(0, 4) == "list" && elTicketBody[i].className.substring(elTicketBody[i].className.length - 4) == "body") nID = i;
-    }
-    if (elTicketBody[nID]) {
-      arrRows = elTicketBody[nID].getElementsByTagName("tr");
-    } else {
-      AppendRunLog("Problem enumerating rows. Reloading page, recalling setTimeOut on CheckTable, and returning early.");
-      MainWin.location.reload();
-      AppendRunLog("RELOAD_MS:" + String(RELOAD_MS));
-      setTimeout(CheckTable, RELOAD_MS);
-      return;
-    }
-    if (arrRows.length > 0) {
-      if (arrRows[0].className.includes("no") && arrRows[0].className.includes("records")) {
-        AppendRunLog("# of Tickets Found: 0");
-        elTicketBody[0].parentNode.removeChild(elTicketBody[0]);
-        MainWin.location.reload();
-      } else {
-
-        sToolLogInfo="";
-        AppendRunLog("# of Tickets Found: " + String(arrRows.length));
-        AppendRunLog("Checking first ticket...");
-
-        AppendToolLog("# of Tickets Found: " + String(arrRows.length));
-        AppendToolLog("Checking first ticket...");
-
-        //Need to keep from renavigating to older tickets
-        //if(arrRows[0].getElementsByTagName("td")[2].getElementsByTagName("a")[0].innerHTML == sNumber){
-        arrRows[0].getElementsByTagName("td")[2].getElementsByTagName("a")[0].click();
-        MainWin.alert = function (sInput) { MainWin.g_form.addInfoMessage(sInput); };
-        window.alert = function () { return false; };
-        AppendRunLog("Overriding MainWin.alert");
-        AppendRunLog("Proceeding to CheckTicket and returning, without re-firing.");
-        AppendRunLog("RELOAD_MS:" + String(RELOAD_MS));
-        nGetTicketRun = 0;
-        nCountTicketRun = 0;
-        setTimeout(CheckTicket, RELOAD_MS);
-        return;
-      }
-    } else {
-      AppendRunLog("# of Tickets Found: 0");
-      elTicketBody[0].parentNode.removeChild(elTicketBody[0]);
-      MainWin.location.reload();
-    }
-    nCheckTableErrCount = 0;
-  } else {
-    sErrMsg = "Error finding tbody element. Script may be stuck on a non-queue page.";
-    AppendRunLog(sErrMsg);
-    bReloadQueue = true;
-    if (nCheckTableErrCount > ERROR_NOTIFICATION_TRIGGER) {
-      TriggerErrorNotification(sErrMsg);
-      nCheckTableErrCount = 0;
-    }
-    nCheckTableErrCount++;
-  }
-  
-  /*Restart process to check again*/
-  AppendRunLog("RELOAD_MS:" + String(RELOAD_MS));
-  setTimeout(CheckTable, RELOAD_MS);
-}
-
-
-
 function sleep(milliseconds) {
   var date = Date.now();
   var currentDate = null;
@@ -599,7 +598,6 @@ function CheckTechs() {
   var sCurGroup = "";
   var sCurGroupName = "";
   var sDescription = "";
-  var bFound = false;
 
   //Modified by sanjay on 10-Jun-2022 - Start
    if (isTicketingToolEnv) {
@@ -645,32 +643,32 @@ AppendRunLog("Technician length:" + String(TechnicianAssignmentByAccountJSON.len
 
 AppendToolLog("Technician length:" + String(TechnicianAssignmentByAccountJSON.length));
 
-  for (i = TechnicianAssignmentByAccountJSON.length - 1; i >= 0; i--) {
-    //Revised group match matrix OPPM availability check here
-    if (!TechnicianAssignmentByAccountJSON[i]['Availability']) {
-      TechnicianAssignmentByAccountJSON.splice(i, 1);
-      AppendRunLog("Tech[" + String(i) + "] is Inactive. Removing from array.");
+for (i = TechnicianAssignmentByAccountJSON.length - 1; i >= 0; i--) {
+  //Revised group match matrix OPPM availability check here
+  if (!TechnicianAssignmentByAccountJSON[i]['Availability']) {
+    TechnicianAssignmentByAccountJSON.splice(i, 1);
+    AppendRunLog("Tech[" + String(i) + "] is Inactive. Removing from array.");
+  }
+}
+
+if (typeof(TechnicianAssignmentByAccountJSON) == 'undefined') {
+  TechnicianAssignmentByAccountJSON = "";
+}
+
+for (i = TechnicianAssignmentByAccountJSON.length - 1; i >= 0; i--) {
+  for (i2 = arrCheckAssignment.length - 1; i2 >= 0; i2--) {
+
+    if (arrCheckAssignment[i2] == TechnicianAssignmentByAccountJSON[i]['Sys_ID']) {
+      bFound = true;
     }
   }
+  if (!bFound) {
+    TechnicianAssignmentByAccountJSON.splice(i, 1);
+    AppendRunLog("Tech[" + String(i) + "] is not Part of the Assignment group. Removing from array.");
 
-  if (typeof(TechnicianAssignmentByAccountJSON) == 'undefined') {
-    TechnicianAssignmentByAccountJSON = "";
   }
-
-  for (i = TechnicianAssignmentByAccountJSON.length - 1; i >= 0; i--) {
-    for (i2 = arrCheckAssignment.length - 1; i2 >= 0; i2--) {
-
-      if (arrCheckAssignment[i2] == TechnicianAssignmentByAccountJSON[i]['Sys_ID']) {
-        bFound = true;
-      }
-    }
-    if (!bFound) {
-      TechnicianAssignmentByAccountJSON.splice(i, 1);
-      AppendRunLog("Tech[" + String(i) + "] is not Part of the Assignment group. Removing from array.");
-
-    }
-    bFound = false;
-  }
+  bFound = false;
+}
 
   switch (TechnicianAssignmentByAccountJSON.length) {
     case 0:
@@ -708,7 +706,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
   var sCI = ""; //WEST
   var sCurASG = "";//WEST & Tenet
   var sService = "";
-  var i;
+
   var arrLocationNovelisStrings = ["User Location",
     "Location", "Location where contractor will be working",
     "From", "To", "Where do you want your item delivered?",
@@ -758,11 +756,11 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
 
       switch (sAccount) {
         case "AIG":
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             sGroupOverrideSearch = MainWin.g_form.getValue("location");
             sRoleQueryPart = sINCQuery;
           }
-          if (sNumber.substring(0, 3) == "SCT") {
+          if (sNumber.substr(0, 3) == "SCT") {
             if (MainWin.g_form.getValue("sc_task.request_item.cat_item") == "Computer Hardware and Accessories: Standard Request") {
               sGroupOverrideSearch = MainWin.gel(FindVariableID4Text("Select the location where items are to be deployed"));
               sRoleQueryPart = sREQGenQuery;
@@ -774,7 +772,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           break;
         case "AMITA":
           UpdateBlankPriorityFields();
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             sPriority = MainWin.g_form.getValue("priority");
             if (parseInt(sPriority) < 3) {
               AppendRunLog("High priority ticket. Assigning to self...");
@@ -801,7 +799,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           }
           break;
         case "Banamex": //Added 4/26/2021 -  Adam Holland
-          switch (sNumber.substring(0, 3)) {
+          switch (sNumber.substr(0, 3)) {
             case "INC": sRoleQueryPart = sINCQuery; break;
             case "TAS": sRoleQueryPart = sREQGenQuery; break;
             case "REQ": sRoleQueryPart = sREQGenQuery; break;
@@ -810,12 +808,12 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           break;
         case "Bombardier":
           //Need to check assignment by appending assignment group with "Office Location" for Incidents and special field for TASK tickets
-          if (sShortDesc.substring(0, 5) != "BOTA:") {
+          if (sShortDesc.substr(0, 5) != "BOTA:") {
             AppendRunLog("BOTA missing from short description. This may not be a vetted ticket. Stopping early.");
             gel("chkRun").click();
             return;
           }
-          switch (sNumber.substring(0, 3)) {
+          switch (sNumber.substr(0, 3)) {
             case "INC": sRoleQueryPart = sINCQuery; break;
             case "INT": sRoleQueryPart = sStagingQuery; break;
             default:
@@ -827,7 +825,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           }
           break;
         case "Caterpillar":
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             sRoleQueryPart = sINCQuery;
           } else {
             if (String(MainWin.g_form.getValue("short_description")).indexOf("IMAC Staging") > -1) {
@@ -842,8 +840,8 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           }
           break;
         case "Cedars-Sinai":
-          if (sShortDesc.substring(0, 4) != "WFA-") return;
-          switch (sNumber.substring(0, 3)) {
+          if (sShortDesc.substr(0, 4) != "WFA-") return;
+          switch (sNumber.substr(0, 3)) {
             case "INC": sRoleQueryPart = sINCQuery; break;
             case "INT": sRoleQueryPart = sStagingQuery; break;
             default: sRoleQueryPart = sREQGenQuery;
@@ -856,33 +854,32 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           }
           break;
         case "Fifth Third Bank":
-          switch (sNumber.substring(0, 3)) {
+          switch (sNumber.substr(0, 3)) {
             case "INC": sRoleQueryPart = sINCQuery; break;
             case "SCT": sRoleQueryPart = sREQGenQuery; break;
             case "TAS": sRoleQueryPart = sREQGenQuery; break;
           }
-          if (sShortDesc.substring(0, 28) == "New/Upgrade Hardware Request" && (sShortDesc.substring(sShortDesc.length - 17) == "Discovery / Build" || sShortDesc.substring(sShortDesc - 5) == "Build")) {
+          if (sShortDesc.substr(0, 28) == "New/Upgrade Hardware Request" && (sShortDesc.substr(-17) == "Discovery / Build" || sShortDesc.substr(-5) == "Build")) {
             ProcessFTBQuery();
             return;
           }
           break;
         case "Grupo Bimbo":
-          switch (sNumber.substring(0, 3)) {
+          switch (sNumber.substr(0, 3)) {
             case "INC": sRoleQueryPart = sINCQuery; break;
             case "TAS": sRoleQueryPart = sREQGenQuery; break;
           }
           break;
         case "Guardian":
-          //This could be in groupmatch matrix
-        //  if (sNumber.substring(0, 3) == "TAS" && sShortDesc == "Retrieve equipment") AssignToOpener();
-          switch (sNumber.substring(0, 3)) {
+          if (sNumber.substr(0, 3) == "TAS" && sShortDesc == "Retrieve equipment") AssignToOpener();
+          switch (sNumber.substr(0, 3)) {
             case "INC": sRoleQueryPart = sINCQuery; break;
             case "TAS": sRoleQueryPart = sREQGenQuery; break;
           }
           break;
 
         case "Independent Health":
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             sRoleQueryPart = sINCQuery;
           } else {
             if (sShortDesc == "Software Task") {
@@ -897,7 +894,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           }
           break;
         case "MedStar":
-          switch (sNumber.substring(0, 3)) {
+          switch (sNumber.substr(0, 3)) {
             case "INC":
               sRoleQueryPart = sINCQuery;
               sGroupOverrideSearch = MainWin.g_form.getValue("location");
@@ -918,7 +915,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           }
           break;
         case "Novelis":
-          switch (sNumber.substring(0, 3)) {
+          switch (sNumber.substr(0, 3)) {
             case "INC":
               AppendRunLog("TAS");
               sRoleQueryPart = sINCQuery;
@@ -933,14 +930,9 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
               if (!oServiceLocation) oServiceLocation = MainWin.g_form.getValue("location");
 
               //added 4/7/2021
-             // for (i = 0; i < arrLocationNovelisStrings.length; i++) {
-             //   if (!oServiceLocation) oServiceLocation = MainWin.gel(FindVariableID4Text(arrLocationNovelisStrings[i]));
-             // }
-
-              for(let NovelisLocationString of arrLocationNovelisStrings) {
-                if(!oServiceLocation) oServiceLocation = MainWin.gel(FindVariableID4Text(NovelisLocationString));
+              for (var i = 0; i < arrLocationNovelisStrings.length; i++) {
+                if (!oServiceLocation) oServiceLocation = MainWin.gel(FindVariableID4Text(arrLocationNovelisStrings[i]));
               }
-
               AppendRunLog("Second Location block - " + sGroupOverrideSearch);
               if (!oServiceLocation) {
                 grUser = MainWin.g_form.getReference("request_item.request.requested_for");
@@ -955,12 +947,12 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           }
           break;
         case "SunCoke Energy":
-          switch (sNumber.substring(0, 3)) {
+          switch (sNumber.substr(0, 3)) {
             case "INC": sRoleQueryPart = sINCQuery; break;
             case "SCT": sRoleQueryPart = sREQGenQuery; break;
           }
         case "Tenet":
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             sGroupOverrideSearch = MainWin.g_form.getValue("location");
             sRoleQueryPart = sINCQuery;
            } else {
@@ -1010,21 +1002,21 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           }
           break;
         case "TxDOT":
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             sRoleQueryPart = sINCQuery;
           } else {
             sRoleQueryPart = sREQGenQuery;
           }
           break;
         case "TxDOT - NOW":
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             sRoleQueryPart = sINCQuery;
           } else {
             sRoleQueryPart = sREQGenQuery;
           }
           break;
         case "US Bank":
-          if (sNumber.substring(0, 3) == "SCT" && (MainWin.g_form.getDisplayBox("assignment_group").value.indexOf(":") > -1 || MainWin.g_form.getDisplayBox("assignment_group").value == "FS_Dispatch Support")) {
+          if (sNumber.substr(0, 3) == "SCT" && (MainWin.g_form.getDisplayBox("assignment_group").value.indexOf(":") > -1 || MainWin.g_form.getDisplayBox("assignment_group").value == "FS_Dispatch Support")) {
             grRITM = MainWin.g_form.getReference("request_item");
             grCatItem = new MainWin.GlideRecord("sc_cat_item");
             grCatItem.get(grRITM.cat_item);
@@ -1036,7 +1028,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
             SaveAndReturn();
             return;
           } else {
-            if (sNumber.substring(0, 3) == "INC") {
+            if (sNumber.substr(0, 3) == "INC") {
               sRoleQueryPart = sINCQuery;
             } else {
               sRoleQueryPart = sREQGenQuery;
@@ -1050,7 +1042,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
           sCurASG = MainWin.g_form.getValue("assignment_group");
 
           /*If CI is blank set the respective Unknown CI by Health Authority*/
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             if (!sService) {
               if (sCI == "") {
 
@@ -1092,7 +1084,7 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
             sGroupOverrideSearch = elAdd.value;
           } else {
             // pull location from parent Incident in Incident task
-            if (sNumber.substring(0, 3) == "TAS") {
+            if (sNumber.substr(0, 3) == "TAS") {
               sGroupOverrideSearch = (function () {
                 var grIncident = new GlideRecord('incident');
                 grIncident.get(g_form.getValue("incident"));
@@ -1103,26 +1095,83 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
             }
           }
 
-          if (sNumber.substring(0, 3) == "INC") {
+          if (sNumber.substr(0, 3) == "INC") {
             sRoleQueryPart = sINCQuery;
           }
-          if (sNumber.substring(0, 3) == "SCT") {
+          if (sNumber.substr(0, 3) == "SCT") {
             sRoleQueryPart = sREQGenQuery;
           }
           break;
           case "Worley":
-           
-            if (sNumber.substring(0, 3) == "INC") {
+
+            sGroupOverrideSearch = MainWin.g_form.getValue("short_description") + "::" + MainWin.g_form.getDisplayBox("assignment_group").value;
+            if (sNumber.substr(0, 3) == "INC") {
                 sRoleQueryPart = sINCQuery;
               }
-              if (sNumber.substring(0, 3) == "SCT") {
+              if (sNumber.substr(0, 3) == "SCT") {
                 sRoleQueryPart = sREQGenQuery;
               }
-              if (sNumber.substring(0, 3) == "REQ") {
+              if (sNumber.substr(0, 3) == "REQ") {
                 sRoleQueryPart = sREQGenQuery;
               }
  
             break;
+
+            case "AMGEN":
+               sGroupOverrideSearch = MainWin.g_form.getValue("short_description") + "::" + MainWin.g_form.getDisplayBox("assignment_group").value;
+               if (sNumber.substr(0, 3) == "INC") {
+                   sRoleQueryPart = sINCQuery;
+                 }
+                 if (sNumber.substr(0, 3) == "SCT") {
+                   sRoleQueryPart = sREQGenQuery;
+                 }
+                 if (sNumber.substr(0, 3) == "REQ") {
+                   sRoleQueryPart = sREQGenQuery;
+                 }
+    
+               break;
+   
+            case "Ingredion":
+             sGroupOverrideSearch = MainWin.g_form.getValue("short_description") + "::" + MainWin.g_form.getDisplayBox("assignment_group").value;
+               if (sNumber.substr(0, 3) == "INC") {
+                   sRoleQueryPart = sINCQuery;
+                 }
+                 if (sNumber.substr(0, 3) == "SCT") {
+                   sRoleQueryPart = sREQGenQuery;
+                 }
+                 if (sNumber.substr(0, 3) == "REQ") {
+                   sRoleQueryPart = sREQGenQuery;
+                 }
+    
+               break;
+
+         case "Arca Continental":
+                sGroupOverrideSearch = MainWin.g_form.getValue("short_description") + "::" + MainWin.g_form.getDisplayBox("assignment_group").value;
+                  if (sNumber.substr(0, 3) == "INC") {
+                      sRoleQueryPart = sINCQuery;
+                    }
+                    if (sNumber.substr(0, 3) == "SCT") {
+                      sRoleQueryPart = sREQGenQuery;
+                    }
+                    if (sNumber.substr(0, 3) == "REQ") {
+                      sRoleQueryPart = sREQGenQuery;
+                    }
+       
+                  break;
+
+          case "Conifer":
+                    sGroupOverrideSearch = MainWin.g_form.getValue("short_description") + "::" + MainWin.g_form.getDisplayBox("assignment_group").value;
+                      if (sNumber.substr(0, 3) == "INC") {
+                          sRoleQueryPart = sINCQuery;
+                        }
+                        if (sNumber.substr(0, 3) == "SCT") {
+                          sRoleQueryPart = sREQGenQuery;
+                        }
+                        if (sNumber.substr(0, 3) == "REQ") {
+                          sRoleQueryPart = sREQGenQuery;
+                        }
+           
+                      break;
 
       }
 
@@ -1136,11 +1185,9 @@ function CheckTicket() {  // BG - This Method shouldn't executed if this is not 
       elPriority = MainWin.document.getElementById('ctl00_ContentPlaceHolder1_tcIncident_tpDetail_ddlPriority');
       if (elPriority) {
         oAssOptions = MainWin.document.getElementById("ctl00_ContentPlaceHolder1_ddlAssignment").getElementsByTagName("option");
-        
-        for (let AssOption of AssOptions) {
-          if(AssOption.selected) sAssGroup = AssOption.innerHTML;
+        for (var i = 0; i < oAssOptions.length; i++) {
+          if (oAssOptions[i].selected) sAssGroup = oAssOptions[i].innerHTML;
         }
-
         AppendRunLog("Pegasus priority field found. Starting query...");
         StartDescQuery();
 
@@ -1270,9 +1317,19 @@ function CountTickets(gr, sName, nIndex) {
 
     /*Re-sort tech list based on ticket count*/
     AppendRunLog("Before sort: " + String(TechnicianAssignmentByAccountJSON));
-    TechnicianAssignmentByAccountJSON.sort(function (a, b) { return a[4] - b[4]; });
+
+    for (var i = 0; i < TechnicianAssignmentByAccountJSON.length; i++) {
+      AppendRunLog(TechnicianAssignmentByAccountJSON[i]['Name']);
+    }
+
+    TechnicianAssignmentByAccountJSON.sort(function (a, b) { return a['CurCount'] - b['CurCount']; });
     arrTicketLog.sort(function (a, b) { return a[1] - b[1]; });
+
     AppendRunLog("After sort: " + String(TechnicianAssignmentByAccountJSON));
+
+ for (var i = 0; i < TechnicianAssignmentByAccountJSON.length; i++) {
+      AppendRunLog(TechnicianAssignmentByAccountJSON[i]['Name']);
+    }
 
     nGetTicketRun = 0;
     nCountTicketRun = 0;
@@ -1343,7 +1400,7 @@ function DoSelfAssign() {
             return (sCategory != "" && sSubCat != "[Blank]");
           }, function () {
             var sCategory = MainWin.g_form.getValue("category");
-            
+            var sSubCat = MainWin.g_form.getValue("subcategory");
             switch (sCategory) {
               case "Application/Software": MainWin.g_form.setValue("subcategory", "Operations"); break;
               case "Printer": MainWin.g_form.setValue("subcategory", "Multi-Function/Scanner/Printer/Fax"); break;
@@ -1353,7 +1410,7 @@ function DoSelfAssign() {
               default:
                 AppendRunLog("Subcategory is blank, but Category is not matched. Category:" + sCategory);
                 return;
-     
+                break;
             }
             MainWin.g_form.flash("sub_category", "#00CC00", 0); //Flash
 
@@ -1374,7 +1431,7 @@ function DoSelfAssign() {
               default:
                 AppendRunLog("Subcategory is blank, but Category is not matched. Category:" + sCategory);
                 return;
-          
+                break;
             }
           }
         }
@@ -1404,6 +1461,30 @@ function DoSelfAssign() {
         sAssignedTo = AssignedTo.name;
         sAssignedToEmail = AssignedTo.email;
         break;
+    case "Amgen":
+          MainWin.g_form.setValue("assigned_to", MainWin.g_user.getUserID());
+          AssignedTo = MainWin.g_form.getReference("assigned_to");
+          sAssignedTo = AssignedTo.name;
+          sAssignedToEmail = AssignedTo.email;
+          break;
+    case "Ingredion":
+            MainWin.g_form.setValue("assigned_to", MainWin.g_user.getUserID());
+            AssignedTo = MainWin.g_form.getReference("assigned_to");
+            sAssignedTo = AssignedTo.name;
+            sAssignedToEmail = AssignedTo.email;
+            break;
+   case "Arca Continental":
+              MainWin.g_form.setValue("assigned_to", MainWin.g_user.getUserID());
+              AssignedTo = MainWin.g_form.getReference("assigned_to");
+              sAssignedTo = AssignedTo.name;
+              sAssignedToEmail = AssignedTo.email;
+              break;
+   case "Conifer":
+                MainWin.g_form.setValue("assigned_to", MainWin.g_user.getUserID());
+                AssignedTo = MainWin.g_form.getReference("assigned_to");
+                sAssignedTo = AssignedTo.name;
+                sAssignedToEmail = AssignedTo.email;
+                break;
     default:
       MainWin.g_form.setValue("assigned_to", MainWin.g_user.getUserID());
       sAssignedTo = MainWin.g_user.fullName;
@@ -1441,7 +1522,7 @@ function DoWorkflow() {  // BG - This method shouldn't be executed if the Window
     case "Cedars-Sinai": WorkflowCSMC(); break;
     case "Corteva": WorkflowCorteva(); break;
     case "Fifth Third Bank":
-      bFTBFlag = (sShortDesc.substring(0, 28) == "New/Upgrade Hardware Request");
+      bFTBFlag = (sShortDesc.substr(0, 28) == "New/Upgrade Hardware Request");
       WorkflowFifthThird(bFTBFlag); break;
     case "Grupo Bimbo": WorkflowGB(); break;
     case "Guardian": WorkflowGuardian(); break;
@@ -1453,7 +1534,7 @@ function DoWorkflow() {  // BG - This method shouldn't be executed if the Window
     case "Tenet":
       WorkflowTenet(); //For Tenet UpdateWorkflowLog() next step is called in function itself on account of asynchronous form updates
       return;
-      
+      break;
     case "Tollbrothers": WorkflowTollBrothers(); break;
     case "TxDOT": WorkflowTxDOT(); break;
     case "TxDOT - NOW": WorkflowTxDOTNow(); break;
@@ -1461,12 +1542,25 @@ function DoWorkflow() {  // BG - This method shouldn't be executed if the Window
     case "US Bank": WorkflowUSBank(); break;
     case "WEST": WorkflowWEST(); break;
     case "Worley": WorkflowWorley(); break;
+    case "Ingredion": WorkflowIngredion(); break;
+    case "Arca Continental": WorkflowArca(); break;
+    case "Conifer": WorkflowConifer(); break;
   }
 
   AppendRunLog("Ticket data set. Updating workflow log...");
   UpdateWorkflowLog();
 }
 
+function FieldComparison(oVariable, sField) {
+  var sName = Object.keys(oVariable)[0];
+  var sCurValue = MainWin.g_form.getValue(sField);
+
+  if (sCurValue != oVariable[sName]) {
+    sUpdatedFieldList += sField + ";";
+  }
+
+  eval(sName + " = '" + sCurValue + "';");
+}
 
 /*
 function FindMainWin() {
@@ -1533,7 +1627,7 @@ function FindVariableID4Text(sInput) {
   for (var i = 0; i < arrSpanTips.length; i++) {
     if (arrSpanTips[i].innerText == sInput) {
       sForID = arrSpanTips[i].parentElement.getAttribute("for");
-      if (sForID.substring(0, 12) == "sys_display.") sForID = sForID.substring(12);
+      if (sForID.substr(0, 12) == "sys_display.") sForID = sForID.substr(12);
       console.log(sForID);
       if (MainWin.gel(sForID).value != "") return sForID;
     }
@@ -1559,7 +1653,7 @@ function GenerateCodeStamp(sActionCode) {
   sHH = dNow.getHours().toString();
   sMS = dNow.getMinutes().toString();
   sDD = dNow.getDate().toString();
-  sYY = dNow.getFullYear().toString().substring(2);
+  sYY = dNow.getFullYear().toString().substr(2);
   sMM = dNow.getMonth();
 
   sMM++;
@@ -1652,8 +1746,10 @@ function GetActiveTickets(sSysID, sTechName, nTechIndex, sDescField, sTable, sSt
 
   nGetTicketRun++;
 
+  if(TechnicianAssignmentByAccountJSON[nTechIndex]['ADAC']) grTicket.addQuery(sDescField, "CONTAINS", " ADAC");
+
   /*Volume-based dispatching for all accounts besides WEST*/
-  if (sAccount == "WEST") grTicket.addQuery(sDescField, "CONTAINS", " ADAC");
+  //if (sAccount == "WEST") grTicket.addQuery(sDescField, "CONTAINS", " ADAC");
 
   for (var i = 0; i < arrExcludeStates.length; i++) {
     grTicket.addQuery(sStateField, "!=", arrExcludeStates[i]);
@@ -1859,7 +1955,7 @@ function NoteMisroute() {
     case "AMGEN":
       sShortDesc = MainWin.g_form.getValue("description");
       if (SDContainsCode()) {
-        MainWin.g_form.setValue("description", sCodeStamp + "\n\n" + sShortDesc.substring(23));
+        MainWin.g_form.setValue("description", sCodeStamp + "\n\n" + sShortDesc.substr(23));
       } else {
         MainWin.g_form.setValue("description", sCodeStamp + "\n\n" + sShortDesc);
       }
@@ -1871,12 +1967,12 @@ function NoteMisroute() {
       UpdateBlankPriorityFields();
       break;
     case "Bombardier":
-      if (sNumber.substring(0, 3) == "INC") {
+      if (sNumber.substr(0, 3) == "INC") {
         MainWin.g_form.setValue("u_ntt_status_code", sCodeStamp);
         MainWin.g_form.flash("u_ntt_status_code", "#00CC00", 0); //Flash
       } else {
         if (SDContainsCode()) {
-          MainWin.g_form.setValue("short_description", sCodeStamp + "\n\n" + sShortDesc.substring(23));
+          MainWin.g_form.setValue("short_description", sCodeStamp + "\n\n" + sShortDesc.substr(23));
         } else {
           MainWin.g_form.setValue("short_description", sCodeStamp + "\n\n" + sShortDesc);
         }
@@ -1885,11 +1981,11 @@ function NoteMisroute() {
     case "Caterpillar":
       sShortDesc = MainWin.g_form.getValue("short_description");
       if (SDContainsCode()) {
-        TOT = parseFloat(sShortDesc.substring(23, 26)) || 0;
+        TOT = parseFloat(sShortDesc.substr(23, 3)) || 0;
         TOT = TOT + 2;
         TOT = String("00" + TOT);
-        TOT = TOT.substring(TOT.length - 3);
-        MainWin.g_form.setValue("short_description", sCodeStamp + " (" + TOT + ") - " + sShortDesc.substring(28));
+        TOT = TOT.substr(TOT.length - 3);
+        MainWin.g_form.setValue("short_description", sCodeStamp + " (" + TOT + ") - " + sShortDesc.substr(28));
       } else {
         MainWin.g_form.setValue("short_description", sCodeStamp + " (002) - " + sShortDesc);
       }
@@ -1898,7 +1994,7 @@ function NoteMisroute() {
     case "Cedars-Sinai":
       sShortDesc = MainWin.g_form.getValue("description");
       if (SDContainsCode()) {
-        MainWin.g_form.setValue("description", sCodeStamp + "\n\n" + sShortDesc.substring(23));
+        MainWin.g_form.setValue("description", sCodeStamp + "\n\n" + sShortDesc.substr(23));
       } else {
         MainWin.g_form.setValue("description", sCodeStamp + "\n\n" + sShortDesc);
       }
@@ -1907,7 +2003,7 @@ function NoteMisroute() {
     case "Grupo Bimbo":
       sShortDesc = MainWin.g_form.getValue("short_description");
       if (SDContainsCode()) {
-        MainWin.g_form.setValue("short_description", sCodeStamp + " - " + sShortDesc.substring(23));
+        MainWin.g_form.setValue("short_description", sCodeStamp + " - " + sShortDesc.substr(23));
       } else {
         MainWin.g_form.setValue("short_description", sCodeStamp + " - " + sShortDesc);
       }
@@ -1943,7 +2039,7 @@ function NovelisAssignCheck() {
 function PadZero(sInput)
  { 
   sInput = "0" + sInput;
-   return sInput.substring(sInput.length - 2); 
+   return sInput.substr(-2); 
 }
 
 function ProcessAssignment() {
@@ -1953,12 +2049,14 @@ function ProcessAssignment() {
   var arrExcludeStatesChange = []; //TxDOT
   var arrExcludeStatesCTask = []; //TxDOT
   var arrExcludeStatesMTask = []; //TxDOT - NOW
+  var arr
   var sIncStateField = "state";
   var sTaskStateField = "state";
   var sMoveStateField = "state";
   var i; //Used for two for loops
+  var i2;
   var sOrigDescriptionField = "";
-
+  var bFound = false;
 
   switch (sAccount) {
     case "AIG":
@@ -2063,12 +2161,24 @@ function ProcessAssignment() {
       sLoadTime = "0";
       AppendRunLog("LogAssign() called.");
       LogAssign();
-      return;
-    
+     
+      break;
       case "Worley":
         arrExcludeStatesInc = ["6", "7"];
         arrExcludeStatesTask = ["3", "4","7"];
         break;
+      case "Ingredion":
+          arrExcludeStatesInc = ["6", "7"];
+          arrExcludeStatesTask = ["3", "4","7"];
+          break;
+      case "Arca Continental":
+            arrExcludeStatesInc = ["6", "7"];
+            arrExcludeStatesTask = ["3", "4","7"];
+            break;
+      case "Conifer":
+              arrExcludeStatesInc = ["6", "7"];
+              arrExcludeStatesTask = ["3", "4","7"];
+              break;
   }
   AppendRunLog("Technician.length:" + String(TechnicianAssignmentByAccountJSON.length));
 
@@ -2077,7 +2187,6 @@ function ProcessAssignment() {
   AppendRunLog("TechnicianAssignmentByAccountJSON.length:" + String(TechnicianAssignmentByAccountJSON.length));
   AppendRunLog("arrCheckAssignment.length:" + String(arrCheckAssignment.length));
 
-/*
   for (i = TechnicianAssignmentByAccountJSON.length - 1; i >= 0; i--) {
     //Revised group match matrix OPPM availability check here
     if (!TechnicianAssignmentByAccountJSON[i]['Availability']) {
@@ -2085,7 +2194,6 @@ function ProcessAssignment() {
       AppendRunLog("Tech[" + String(i) + "] is Inactive. Removing from array.");
     }
   }
-
 
   for (i = TechnicianAssignmentByAccountJSON.length - 1; i >= 0; i--) {
     for (i2 = arrCheckAssignment.length - 1; i2 >= 0; i2--) {
@@ -2101,7 +2209,7 @@ function ProcessAssignment() {
     }
     bFound = false
   }
-*/
+
   switch (TechnicianAssignmentByAccountJSON.length) {
     case 0:
       sPriority = "[Unknown]";
@@ -2256,14 +2364,18 @@ function Run_Change() {
         case "MedStar": sDescField = "description"; break;
         case "SunCoke Energy": sDescField = "description"; break;
         case "TxDOT": sDescField = "description"; break;
-        case "US Bank":
-          sDescField = "short_description";
-                   break;
+        case "US Bank": sDescField = "short_description"; break;
+        case "Worley": sDescField = "u_my_work_priority"; break; 
+        case "Ingredion": sDescField = "u_my_work_priority"; break;  
+        case "Arca Continental": sDescField = "u_my_work_priority"; break;     
+        case "Conifer": sDescField = "u_my_work_priority"; break;      
         default: sDescField = "description"; break;
       }
       AppendRunLog("Short Description Field: " + sDescField);
       AppendRunLog("Logged in User Name : " + MainWin.g_user.fullName);
       LoggedinUsername= MainWin.g_user.fullName;
+      //var CurrentMailDate = new Date();
+     // EmailNotification("WAM BOT is Running - "+ CurrentMailDate.toString(),"WAM BOT");
       //Check the list of tickets in the ueue.
       CheckTable();
     }
@@ -2285,6 +2397,15 @@ function SaveAndReturn() {
   if(!btnUpdate) btnUpdate = MainWin.document.getElementById("sysverb_update_and_stay");
   if (btnUpdate) {
     btnUpdate.click();
+
+     /*if(sAccount = "Arca Continental")
+      {
+          if (btnUpdate) setTimeout(function () { btnUpdate.click(); }, 20000);
+      }
+      else
+      {  btnUpdate.click();}*/
+      
+
     //sleep(30000);
     AppendRunLog("btnUpdate.click() called");
   } else {
@@ -2311,7 +2432,7 @@ function SaveAndStay() {
 
 
 
-function SDContainsCode() { return sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " "; }
+function SDContainsCode() { return sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " "; }
 
 function SetupDispatchInterface() {
   var oDispWin = document.createElement("div");
@@ -2385,7 +2506,7 @@ function SetupDispatchInterface() {
 
   oRunInput.onchange = Run_Change;
   oHeaderClose.onclick = CloseDispatchWindow;
-  oHeader.onmousedown = function onMouseDown(event) { DragElem = this.parentNode; beginADWinDrag(event); };
+  oHeader.onmousedown = function onMouseDown(event) { beginADWinDrag(this.parentNode, event); };
 }
 
 function ShowLoader() {
@@ -2441,11 +2562,11 @@ function StartGroupQuery() {
   /*Adjust role query part*/
   sOrigRoleQueryPart = sRoleQueryPart;
   AppendRunLog("Calling StartQuery once GetGroupMatchMatrixByAccount API completes.");
-  OutSys_CallAPI("GetGroupMatchMatrixByAccount?AccountName=" + sAccount, "GET", StartQuery, "StartGroupQuery");
+  OutSys_CallAPI("GetGroupMatchMatrixList?AccountName=" + sAccount, "GET", StartQuery, "StartGroupQuery");
 }
 
 function StartQuery() {
-
+  var url = "";
   var sPPMOverride = "false";
   var sPPMInEffect = "false";
   var sAvailableField = "";
@@ -2475,7 +2596,7 @@ function StartQuery() {
   }
 
   if (sAccount == "Tenet") {
-    switch (sNumber.substring(0, 3)) {
+    switch (sNumber.substr(0, 3)) {
       case "INC":
         sGroupOverrideSearch = MainWin.g_form.getValue("u_issue_type") + "::" + sCurGroup;
         break;
@@ -2492,31 +2613,54 @@ function StartQuery() {
   }
 
   /*Adjust assignment group*/
-  if (typeof (GroupMatchMatrixByAccountJSON) == 'undefined') {
-    GroupMatchMatrixByAccountJSON = "";
+  if (typeof (GroupMatchMatrixJSON) == 'undefined') {
+    GroupMatchMatrixJSON = "";
   }
   AppendRunLog("sGroupOverrideSearch:" + sGroupOverrideSearch);
-  for (var i = 0; i < GroupMatchMatrixByAccountJSON.length; i++) {
-    if (GroupMatchMatrixByAccountJSON[i]['Search'] == sGroupOverrideSearch) {
+
+  
+
+  for (var i = 0; i < GroupMatchMatrixJSON.length; i++) {
+    AppendRunLog("GroupMatchMatrixJSON[i]['Search']:" + GroupMatchMatrixJSON[i]['Search']);
+
+    if((sAccount == "Worley")|| (sAccount == "Amgen") || (sAccount == "Ingredion")  ) {
+      sGroupOverrideSearch = sGroupOverrideSearch.toLowerCase();
+
+      AppendRunLog("GOS0:" + sGroupOverrideSearch.split("::")[0]);
+      
+      AppendRunLog("GOS1:" + sGroupOverrideSearch.split("::")[1]);
+
+      if(sGroupOverrideSearch.indexOf(GroupMatchMatrixJSON[i]['Search'].toLowerCase().split("::")[0]) > -1 && GroupMatchMatrixJSON[i]['Search'].toLowerCase().split("::")[1] == sGroupOverrideSearch.split("::")[1]) {
+   
       nFoundRow = i;
+      }
+    } else {
+      if (GroupMatchMatrixJSON[i]['Search'] == sGroupOverrideSearch) {
+        nFoundRow = i;
+      }
     }
+
+   
   }
 
   if (sAccount == "Tenet" && nFoundRow == -1) {
     sGroupOverrideSearch = sOrigGroupSearch;
-    for (var i = 0; i < GroupMatchMatrixByAccountJSON.length; i++) {
-      if (GroupMatchMatrixByAccountJSON[i]['Search'] == sGroupOverrideSearch) {
+    for (var i = 0; i < GroupMatchMatrixJSON.length; i++) {
+      if (GroupMatchMatrixJSON[i]['Search'] == sGroupOverrideSearch) {
         nFoundRow = i;
       }
     }
   }
 
+  AppendRunLog("nFoundRow = \"" + nFoundRow + "\"");
+
   if (nFoundRow > -1) {
-    sAssGroup = GroupMatchMatrixByAccountJSON[nFoundRow]['AssignmentGroupsName'];
-    sSNGroupID = GroupMatchMatrixByAccountJSON[nFoundRow]['ServiceNowAssignmentGroupSysID'];
-    sPPMOverride = GroupMatchMatrixByAccountJSON[nFoundRow]['IsPPMOverride'];
-    sPPMInEffect = GroupMatchMatrixByAccountJSON[nFoundRow]['IsPPMInEffect'];
+    sAssGroup = GroupMatchMatrixJSON[nFoundRow]['VirtualAssignmentGroupName'];
+    sSNGroupID = GroupMatchMatrixJSON[nFoundRow]['ServiceNowAssignmentGroupSysID'];
+    sPPMOverride = GroupMatchMatrixJSON[nFoundRow]['IsPPMOverride'];
+    sPPMInEffect = GroupMatchMatrixJSON[nFoundRow]['IsPPMInEffect'];
   }
+
 
   /*Account-specific assignment group override*/
   switch (sAccount) {
@@ -2537,7 +2681,7 @@ function StartQuery() {
       break;
     case "US Bank":
       /*US Bank specific override*/
-      if (sNumber.substring(0, 3) == "SCT") {
+      if (sNumber.substr(0, 3) == "SCT") {
         sUserEmail = MainWin.g_form.getReference("request.requested_for").email;
         for (var i = 0; i < arrEmailAdds.length; i++) {
           if (sUserEmail == arrEmailAdds[i]) {
@@ -2556,7 +2700,19 @@ function StartQuery() {
       break;
       case "Worley":
         sAssGroup =     MainWin.g_form.getDisplayBox("assignment_group").value;
-break;
+      break;
+      case "AMGEN":
+        sAssGroup =     MainWin.g_form.getDisplayBox("assignment_group").value;
+      break;
+      case "Ingredion":
+        sAssGroup =     MainWin.g_form.getDisplayBox("assignment_group").value;
+        break;
+     case "Arca Continental":
+          sAssGroup =     MainWin.g_form.getDisplayBox("assignment_group").value;
+      break;
+      case "Conifer":
+          sAssGroup =     MainWin.g_form.getDisplayBox("assignment_group").value;
+      break;
   }
 
   /*Pick appropriate field for availability*/
@@ -2724,7 +2880,7 @@ function UpdateBlankPriorityFields() {
 function UpdateWorkflowLog() {
   var dEndDate = new Date();
   var nCalcTOT = dEndDate - dCurDate;
-
+  var sUpdateURL = "";
   var sTicketURL = "";
   var sLogType = "Workflow";
   var sCurAssGroup = "";
@@ -2736,45 +2892,17 @@ function UpdateWorkflowLog() {
     sLogType = "Initial";
   } else {
     if (!bAssGroupChange) {
-      //FieldComparison({ sNumber: sNumber }, "number");
-
-      if(MainWin.g_form.getValue("number") != sNumber) {
-        sUpdatedFieldList += "number;";
-        sNumber = MainWin.g_form.getValue("number");
-      }
-
+      FieldComparison({ sNumber: sNumber }, "number");
 
       if (sNumber.slice(0, 3) == "INC") {
-       // FieldComparison({ sPriority: sPriority }, "priority");
-
-     
-        if(MainWin.g_form.getValue("priority") != sPriority) {
-          sUpdatedFieldList += "priority;";
-          sPriority = MainWin.g_form.getValue("priority");
-        }
- 
-
+        FieldComparison({ sPriority: sPriority }, "priority");
       } else {
         if ((sShortDesc != "Update Inventory" && sShortDesc != "Uptade Inventory") && sItem != "Termination Request") {
-         // FieldComparison({ sPriority: sPriority }, "sc_task.u_sla_type_ritm");
-
-        
-        if(MainWin.g_form.getValue("sc_task.u_sla_type_ritm") != sPriority) {
-          sUpdatedFieldList += "priority;";
-          sPriority = MainWin.g_form.getValue("sc_task.u_sla_type_ritm");
-        }
-       
-
+          FieldComparison({ sPriority: sPriority }, "sc_task.u_sla_type_ritm");
         }
       }
 
-    //  FieldComparison({ sLocation: sLocation }, "location");
-
-    
-      if(MainWin.g_form.getValue("location") != sPriority) {
-        sUpdatedFieldList += "location;";
-        sPriority = MainWin.g_form.getValue("location");
-      }
+      FieldComparison({ sLocation: sLocation }, "location");
 
       sCurAssGroup = MainWin.g_form.getDisplayBox("assignment_group").value;
       if (sAssGroup != sCurAssGroup) {
@@ -2800,7 +2928,7 @@ function UpdateWorkflowLog() {
   bAssGroupChange = false;
 
   sTicketURL = window.location.href;
-  sTicketURL = (sTicketURL.indexOf("%26") ? sTicketURL.substring(0, sTicketURL.indexOf("%26")) : sTicketURL);
+  sTicketURL = (sTicketURL.indexOf("%26") ? sTicketURL.substr(0, sTicketURL.indexOf("%26")) : sTicketURL);
   var PostUrl = sNTTAPIURL + 'rest/V2/PostWorkFlowLog/';
 
   /*Future Enhancement*/
@@ -2810,25 +2938,25 @@ function UpdateWorkflowLog() {
   
   var PostData = [{
     "TicketNumber": sNumber,
-    "AssignmentGroupName": sAssGroup,
+    "AssignmentGroupName": "" + sAssGroup + "",
     "ActionCodeTemplateName": "DSPT",
-    "FSTechnicianName": sAssignedTo,
-    "FSTechnicianEmailId": sAssignedToEmail,
-    "AccountName": sAccount,
+    "FSTechnicianName": "" + sAssignedTo + "",
+    "FSTechnicianEmailId": "" + sAssignedToEmail + "",
+    "AccountName": "" + sAccount + "",
     "LogTypeName": "Scheduling",
     "UnresolvedCodeName": "Printer",
     "AssignedTo": "" + sAssignedTo + "",
-    "TicketTypeName": sNumber.substring(0,3),
-    "LocationName": sLocation,
-    "Priority": sPriority,
+    "TicketTypeName": sNumber.substr(0,3),
+    "LocationName": "" + sLocation + "",
+    "Priority": "" + sPriority + "",
     "TOT": nCalcTOT,
     "PriorityOfTicket": sPriority,
     "TicketOpenedDateTime": sOpened,
-    "TicketModifiedBy": sUserFullName,
+    "TicketModifiedBy": "" + sUserFullName + "",
     "TicketModifiedDateTime": dEndDate.toISOString().split("T")[0] + " " + dEndDate.toISOString().split("T")[1].split(".")[0],
-    "Notes": sUpdateNotes,
-    "TicketURL": sTicketURL,
-    "ToolVersion": sAutoVer,
+    "Notes": "" + sUpdateNotes + "",
+    "TicketURL": "" + sTicketURL + "" ,
+    "ToolVersion": "" + sAutoVer + "",
     "ActiveTicketCount": (TechnicianAssignmentByAccountJSON == "" ? 0 : TechnicianAssignmentByAccountJSON[0]['CurCount']),
     "TicketLoadDateTime": sLoadTime,
     "DispatchType": "HPL",
@@ -2836,7 +2964,7 @@ function UpdateWorkflowLog() {
     "ActionDateTime": dEndDate.toISOString().split("T")[0] + " " + dEndDate.toISOString().split("T")[1].split(".")[0],
     "IsAcknowledgmentUpdate": true,
     "LastActionStamp": "N/A [WAM]",
-    "FieldsUpdated": sUpdatedFieldList,
+    "FieldsUpdated": "" + sUpdatedFieldList + "",
     "ApplicationName": "WAM",
     "CreatedUser":"" + LoggedinUsername + "",
     "Log" : "NA"
@@ -2909,8 +3037,8 @@ function VarReset() {
 }
 
 function WorkflowAIG() {
- 
- 
+  var sReqByPhone = "";
+  var sReqForPhone = "";
   var elAdd = null;
   AppendRunLog("Updating ticket...");
   AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
@@ -2961,45 +3089,43 @@ function WorkflowAIG() {
 }
 
 function WorkflowAMGEN() {
-  AppendRunLog("Updating ticket...");
-  AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
-  AppendRunLog("MainWin:" + String(MainWin));
-  AppendRunLog("MainWin.g_form:" + String(MainWin.g_form));
+  if (isTicketingToolEnv) {
+    var FirstName;
 
-  MainWin.g_form.setValue("assigned_to", TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+    AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+ 
+    MainWin.g_form.flash("assignment_group", "#00CC00", 0); //Flash
+    MainWin.g_form.setValue("assigned_to", TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+    MainWin.g_form.flash("assigned_to", "#00CC00", 0); //Flash
+   
+    AssignedTo = MainWin.g_form.getReference("assigned_to");
+    FirstName = AssignedTo.first_name;
+    sAssignedTo = AssignedTo.name;
+    sAssignedToEmail = AssignedTo.email;
 
-  AssignedTo = MainWin.g_form.getReference("assigned_to");
-  sFirstName = AssignedTo.first_name;
-  sAssignedTo = AssignedTo.name;
-  sShortDesc = MainWin.g_form.getValue("description");
-  sOpened = MainWin.g_form.getValue("opened_at");
-  dSNLoadTime = MainWin.g_loadTime;
+    sAssGroup = MainWin.g_form.getDisplayBox("assignment_group").value;
 
-  //Update short description
-  if (SDContainsCode()) {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substring(23));
-  } else {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc);
+    AppendRunLog("Assignment Group:" + sAssGroup);
+
+    sNumber = MainWin.g_form.getValue("number");
+
+    sOpened = MainWin.g_form.getValue("opened_at");
+
+    dSNLoadTime = MainWin.g_loadTime;
+    
+    MainWin.g_form.setValue("state", "2");
+
+    MainWin.g_form.setValue("u_my_work_priority", sCodeStamp );
+
+     MainWin.g_form.flash("u_my_work_priority", "#00CC00", 0); //Flash
+
+     //Additional comments
+    var sAppendNotes="Assigned to Technician.";
+    MainWin.g_form.setValue("comments", sAppendNotes.replace(/(?:\n\n)/g, "\n"));
+
+    MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Assigned to Technician."); 
+ 
   }
-  MainWin.g_form.flash("description", "#00CC00", 0); //Flash
-
-  if (sNumber.slice(0, 3) == "INC") {
-    sPriority = MainWin.g_form.getValue("priority");
-    if (parseInt(sPriority) > 2) {
-      MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Auto-dispatched to " + sFirstName + ".");
-    } else {
-      MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Calling to confirm tech availability for " + AssignedTo.fullName);
-      MainWin.g_form.setValue("assigned_to", MainWin.g_user.getUserID());
-      sAssignedTo = MainWin.g_user.fullName;
-      MainWin.g_form.setValue("state", "2"); //Correlates with "In Progress"
-      MainWin.g_form.flash("state", "#00CC00", 0); //Flash
-    }
-  } else {
-    sPriority = MainWin.g_form.getValue("sc_task.u_sla_type_ritm");
-    MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Assigned to Technician.");
-  }
-
-  MainWin.g_form.flash("work_notes", "#00CC00", 0); //Flash
 }
 
 function WorkflowAMITA() {
@@ -3044,7 +3170,7 @@ function WorkflowBomb() {
     sRSLVStamp = sCodeStamp.replace("DSPT", "RSLV");
     sUSDGroup = MainWin.g_form.getValue("assignment_group.u_usd_name");
 
-    if (SDContainsCode()) sShortDesc = sShortDesc.substring(24);
+    if (SDContainsCode()) sShortDesc = sShortDesc.substr(24);
 
     if ((sShortDesc == "Update Inventory" || sShortDesc == "Uptade Inventory") && sItem == "Termination Request") {
       MainWin.g_form.setValue("work_notes", sRSLVStamp + "\nWork completed by FS as part of the Receive ticket.");
@@ -3052,7 +3178,7 @@ function WorkflowBomb() {
       MainWin.g_form.flash("state", "#00CC00", 0); //Flash
       MainWin.g_form.setValue("short_description", sRSLVStamp + " - " + sShortDesc);
       MainWin.g_form.flash("short_description", "#00CC00", 0); //Flash
-      if (sUSDGroup.substring(0, 3) == "CAN") {
+      if (sUSDGroup.substr(0, 3) == "CAN") {
         if (sUSDGroup.indexOf("Downsview") > -1) {
           MainWin.g_form.setValue("assignment_group", "032bc7d76fa99e88a6bd9b9eae3ee41a"); //FS Project Toronto - Canada
         } else {
@@ -3078,8 +3204,8 @@ function WorkflowBomb() {
 
 
 function WorkflowBanamex() {
-
-
+  var sReqByPhone = "";
+  var sReqForPhone = "";
   var sSymptom = "";
   var elAdd = null;
   AppendRunLog("Updating ticket...");
@@ -3109,8 +3235,8 @@ function WorkflowBanamex() {
   /*Update short description*/
   if (sNumber.slice(0, 3) == "INC") {
     sShortDesc = sShortDesc.replace(" ADAC", "");
-    if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-      MainWin.g_form.setValue("u_user_defined_1", sCodeStamp + " ADAC\n\n" + sShortDesc.substring(23));
+    if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+      MainWin.g_form.setValue("u_user_defined_1", sCodeStamp + " ADAC\n\n" + sShortDesc.substr(23));
     } else {
       MainWin.g_form.setValue("u_user_defined_1", sCodeStamp + " ADAC\n\n" + sShortDesc);
     }
@@ -3175,12 +3301,12 @@ function WorkflowCAT() {
 
   //Update short description
   if (SDContainsCode()) {
-    TOT = parseFloat(sShortDesc.substring(23, 26)) || 0;
+    TOT = parseFloat(sShortDesc.substr(23, 3)) || 0;
     TOT = TOT + 2;
     //Reformat TOT with leading 0s
     TOT = String("00" + TOT);
-    TOT = TOT.substring(TOT.length - 3);
-    MainWin.g_form.setValue("short_description", sCodeStamp + " (" + TOT + ") ADAC - " + sShortDesc.substring(28));
+    TOT = TOT.substr(TOT.length - 3);
+    MainWin.g_form.setValue("short_description", sCodeStamp + " (" + TOT + ") ADAC - " + sShortDesc.substr(28));
   } else {
     MainWin.g_form.setValue("short_description", sCodeStamp + " (002) ADAC - " + sShortDesc);
   }
@@ -3189,11 +3315,11 @@ function WorkflowCAT() {
 
   if (sNumber.slice(0, 3) == "INC") {
     grUser = MainWin.g_form.getReference("caller_id");
-    sLocation = String(grUser.u_desk_location).substring(0, 2);
+    sLocation = String(grUser.u_desk_location).substr(0, 2);
     MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Auto-dispatched to " + sFirstName + ".");
   } else {
     grUser = MainWin.g_form.getReference("request_item.request.requested_for");
-    sLocation = String(grUser.u_desk_location).substring(0, 2);
+    sLocation = String(grUser.u_desk_location).substr(0, 2);
     sPriority = MainWin.g_form.getValue("sc_task.u_sla_type_ritm");
     MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Auto-dispatched to Scheduler.");
   }
@@ -3203,7 +3329,7 @@ function WorkflowCAT() {
 
 function WorkflowCorteva(bHardQuery) {
   var strDescBuffer = "";
- 
+  var strADAC = " ADAC";
   var fortnightAway = new Date(Date.now() + 12096e5);
   var NewDate = "";
   NewDate = SetTwoWeeks(fortnightAway);
@@ -3227,9 +3353,9 @@ function WorkflowCorteva(bHardQuery) {
 
   /*Update Description*/
   if (sShortDesc.charAt(2) == "/" && sShortDesc.charAt(5) == "/") {
-    strDescBuffer = sShortDesc.substring(22); //Ignore existing status code
-    if (strDescBuffer.substring(0, 4) == "ADAC") {
-      strDescBuffer = strDescBuffer.substring(5); //Bypass ADAC code
+    strDescBuffer = sShortDesc.substr(22); //Ignore existing status code
+    if (strDescBuffer.substr(0, 4) == "ADAC") {
+      strDescBuffer = strDescBuffer.substr(5); //Bypass ADAC code
     }
   } else {
     strDescBuffer = sShortDesc;
@@ -3274,9 +3400,9 @@ function WorkflowCSMC() {
 
   //Update short description
   if (SDContainsCode()) {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substring(27));
+    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substr(27));
   } else {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substring(4));
+    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substr(4));
   }
   MainWin.g_form.flash("description", "#00CC00", 0); //Flash
 
@@ -3301,7 +3427,7 @@ function WorkflowCSMC() {
 
 function WorkflowFifthThird(bHardQuery) {
   var strDescBuffer = "";
-  
+  var strADAC = " ADAC";
   var fortnightAway = new Date(Date.now() + 12096e5);
   var NewDate = "";
 
@@ -3327,9 +3453,9 @@ function WorkflowFifthThird(bHardQuery) {
 
   /*Update Description*/
   if (sShortDesc.charAt(2) == "/" && sShortDesc.charAt(5) == "/") {
-    strDescBuffer = sShortDesc.substring(22); //Ignore existing status code
-    if (strDescBuffer.substring(0, 4) == "ADAC") {
-      strDescBuffer = strDescBuffer.substring(5); //Bypass ADAC code
+    strDescBuffer = sShortDesc.substr(22); //Ignore existing status code
+    if (strDescBuffer.substr(0, 4) == "ADAC") {
+      strDescBuffer = strDescBuffer.substr(5); //Bypass ADAC code
     }
   } else {
     strDescBuffer = sShortDesc;
@@ -3376,7 +3502,7 @@ function WorkflowGB() {
   //Update short description
   sShortDesc = sShortDesc.replace(" ADAC", "");
   if (SDContainsCode()) {
-    MainWin.g_form.setValue("short_description", sCodeStamp + " ADAC - " + sShortDesc.substring(23));
+    MainWin.g_form.setValue("short_description", sCodeStamp + " ADAC - " + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("short_description", sCodeStamp + " ADAC - " + sShortDesc);
   }
@@ -3450,10 +3576,10 @@ function WorkflowGuardian() {
 }
 
 function WorkflowMagellan() {
-
-
-
-
+  var sReqByPhone = "";
+  var sReqForPhone = "";
+  var sSymptom = "";
+  var elAdd = null;
   AppendRunLog("Updating ticket...");
   AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
   AppendRunLog("MainWin:" + String(MainWin));
@@ -3473,8 +3599,8 @@ function WorkflowMagellan() {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc);
   }
@@ -3506,10 +3632,10 @@ function WorkflowMagellan() {
 }
 
 function WorkflowNovelis(sAssignID) {
- 
-
-
-
+  var sReqByPhone = "";
+  var sReqForPhone = "";
+  var sSymptom = "";
+  var elAdd = null;
   AppendRunLog("Updating ticket...");
   AppendRunLog("sAssignID:" + sAssignID);
   AppendRunLog("MainWin:" + String(MainWin));
@@ -3529,8 +3655,8 @@ function WorkflowNovelis(sAssignID) {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc);
   }
@@ -3581,8 +3707,8 @@ function WorkflowIHA() {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " (000) ADAC\n\n" + sShortDesc);
   }
@@ -3612,9 +3738,9 @@ function WorkflowIHA() {
 
 function WorkflowMedStar() {
   var strDescBuffer = "";
-
+  var strADAC = " ADAC";
   var sCategory = "";
-
+  var sSubCategory = "";
 
   AppendRunLog("Updating ticket...");
   AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
@@ -3638,9 +3764,9 @@ function WorkflowMedStar() {
   sSubCategory = MainWin.g_form.getValue("subcategory");
   /*Update Description*/
   if (sShortDesc.charAt(2) == "/" && sShortDesc.charAt(5) == "/") {
-    strDescBuffer = sShortDesc.substring(22); //Ignore existing status code
-    if (strDescBuffer.substring(0, 4) == "ADAC") {
-      strDescBuffer = strDescBuffer.substring(5); //Bypass ADAC code
+    strDescBuffer = sShortDesc.substr(22); //Ignore existing status code
+    if (strDescBuffer.substr(0, 4) == "ADAC") {
+      strDescBuffer = strDescBuffer.substr(5); //Bypass ADAC code
     }
   } else {
     strDescBuffer = sShortDesc;
@@ -3758,8 +3884,8 @@ function WorkflowSuncoke() {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n" + sShortDesc);
   }
@@ -3789,8 +3915,8 @@ function WorkflowTenet() {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " NTTDATATOOLWAM  ADAC\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " NTTDATATOOLWAM  ADAC\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " NTTDATATOOLWAM  ADAC\n" + sShortDesc);
   }
@@ -3842,7 +3968,7 @@ function WorkflowTenet() {
         return (sCategory != "" && sSubCat != "[Blank]");
       }, function () {
         var sCategory = MainWin.g_form.getValue("category");
-        
+        var sSubCat = MainWin.g_form.getValue("subcategory");
         switch (sCategory) {
           case "Application/Software": MainWin.g_form.setValue("subcategory", "Operations"); break;
           case "Printer": MainWin.g_form.setValue("subcategory", "Multi-Function/Scanner/Printer/Fax"); break;
@@ -3851,8 +3977,7 @@ function WorkflowTenet() {
           case "Voice/Telecom": MainWin.g_form.setValue("subcategory", "ACD"); break;
           default:
             AppendRunLog("Subcategory is blank, but Category is not matched. Category:" + sCategory);
-            return;
-      
+           break;
         }
         MainWin.g_form.flash("sub_category", "#00CC00", 0); //Flash
 
@@ -3871,8 +3996,7 @@ function WorkflowTenet() {
           case "Voice/Telecom": MainWin.g_form.setValue("subcategory", "ACD"); break;
           default:
             AppendRunLog("Subcategory is blank, but Category is not matched. Category:" + sCategory);
-            return;
- 
+            break;
         }
       }
 
@@ -3911,8 +4035,8 @@ function WorkflowTollBrothers() {
 
     /*Update short description*/
     sShortDesc = sShortDesc.replace(" ADAC", "");
-    if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-      MainWin.g_form.setValue("short_description", sCodeStamp + " ADAC\n" + sShortDesc.substring(23));
+    if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+      MainWin.g_form.setValue("short_description", sCodeStamp + " ADAC\n" + sShortDesc.substr(23));
     } else {
       MainWin.g_form.setValue("short_description", sCodeStamp + " ADAC\n" + sShortDesc);
     }
@@ -3947,8 +4071,8 @@ function WorkflowTxDOT() {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc);
   }
@@ -3988,8 +4112,8 @@ function WorkflowTxDOT() {
 }
 
 function WorkflowTxDOTNow() {
-
-
+  var sReqByPhone = "";
+  var sReqForPhone = "";
   var sSymptom = "";
   var elAdd = null;
   AppendRunLog("Updating ticket...");
@@ -4012,8 +4136,8 @@ function WorkflowTxDOTNow() {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc);
   }
@@ -4069,7 +4193,7 @@ function WorkflowUSBSVC() {
 function WorkflowUSBank() {
   var elAdd = null;
   var btnUpdate;
-
+  var i;
   var sCategory = "";
 
   AppendRunLog("Updating ticket...");
@@ -4107,8 +4231,8 @@ function WorkflowUSBank() {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n\n" + sShortDesc);
   }
@@ -4150,7 +4274,7 @@ function WorkflowUSBank() {
 function SendValue(sFieldName, sValue) {
   var sGREEN = "#00C00";
   var sREADONLY_PREFIX = "sys_readonly.";
-
+  var sSELECTTAG = "SELECT";
 
   if (MainWin.g_form.getControl(sFieldName)) {
     if (MainWin.gel(sREADONLY_PREFIX + MainWin.g_form.getControl(sFieldName).id)) {
@@ -4178,8 +4302,8 @@ function AbortField(sFieldName) {
 
 function WorkflowWEST() {
   var FirstName;
-
-
+  var sSchedDesc = "";
+  var btnUpdate;
 
   MainWin.g_form.setValue("assigned_to", TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
 
@@ -4195,8 +4319,8 @@ function WorkflowWEST() {
 
   /*Update short description*/
   sShortDesc = sShortDesc.replace(" ADAC", "");
-  if (sShortDesc.substring(2, 3) == "/" && sShortDesc.substring(5, 6) == "/" && sShortDesc.substring(8, 9) == " " && sShortDesc.substring(13, 14) == " ") {
-    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n" + sShortDesc.substring(23));
+  if (sShortDesc.substr(2, 1) == "/" && sShortDesc.substr(5, 1) == "/" && sShortDesc.substr(8, 1) == " " && sShortDesc.substr(13, 1) == " ") {
+    MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n" + sShortDesc.substr(23));
   } else {
     MainWin.g_form.setValue("description", sCodeStamp + " ADAC\n" + sShortDesc);
   }
@@ -4263,11 +4387,165 @@ function WorkflowWorley() {
  
 }
 
+function WorkflowIngredion() {
+ 
+  if (isTicketingToolEnv) {
+    var FirstName;
+
+    AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+ 
+    MainWin.g_form.flash("assignment_group", "#00CC00", 0); //Flash
+    MainWin.g_form.setValue("assigned_to", TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+    MainWin.g_form.flash("assigned_to", "#00CC00", 0); //Flash
+   
+    AssignedTo = MainWin.g_form.getReference("assigned_to");
+    FirstName = AssignedTo.first_name;
+    sAssignedTo = AssignedTo.name;
+    sAssignedToEmail = AssignedTo.email;
+
+    sAssGroup = MainWin.g_form.getDisplayBox("assignment_group").value;
+
+    AppendRunLog("Assignment Group:" + sAssGroup);
+
+    sNumber = MainWin.g_form.getValue("number");
+
+    sOpened = MainWin.g_form.getValue("opened_at");
+
+    dSNLoadTime = MainWin.g_loadTime;
+    
+    MainWin.g_form.setValue("state", "2");
+
+    if (sNumber.substr(0, 3) == "INC") {
+      MainWin.g_form.setValue("u_status_summary", "Breakfix" );
+    }
+    else {workflowarca
+      MainWin.g_form.setValue("u_status_summary", "Request" );
+    }
+
+    MainWin.g_form.setValue("u_my_work_priority", sCodeStamp );
+
+
+     MainWin.g_form.flash("u_my_work_priority", "#00CC00", 0); //Flash
+
+     //Additional comments
+    var sAppendNotes="Assigned to Technician.";
+    MainWin.g_form.setValue("comments", sAppendNotes.replace(/(?:\n\n)/g, "\n"));
+
+    MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Assigned to Technician."); 
+ 
+  }
+ 
+}
+
+function WorkflowArca() {
+ 
+  if (isTicketingToolEnv) {
+    var FirstName;
+
+    AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+ 
+    MainWin.g_form.flash("assignment_group", "#00CC00", 0); //Flash
+    MainWin.g_form.setValue("assigned_to", TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+   // sleep(30000);
+    MainWin.g_form.flash("assigned_to", "#00CC00", 0); //Flash
+   
+    AssignedTo = MainWin.g_form.getReference("assigned_to");
+    FirstName = AssignedTo.first_name;
+    sAssignedTo = AssignedTo.name;
+    sAssignedToEmail = AssignedTo.email;
+
+    sAssGroup = MainWin.g_form.getDisplayBox("assignment_group").value;
+
+    AppendRunLog("Assignment Group:" + sAssGroup);
+
+    sNumber = MainWin.g_form.getValue("number");
+
+    sOpened = MainWin.g_form.getValue("opened_at");
+
+    dSNLoadTime = MainWin.g_loadTime;
+    
+    MainWin.g_form.setValue("state", "2");
+
+    if (sNumber.substr(0, 3) == "INC") {
+      MainWin.g_form.setValue("u_status_summary", "Breakfix" );
+    }
+    else {
+      MainWin.g_form.setValue("u_status_summary", "Request" );
+    }
+
+    MainWin.g_form.setValue("u_my_work_priority", sCodeStamp );
+
+
+     MainWin.g_form.flash("u_my_work_priority", "#00CC00", 0); //Flash
+
+     //Additional comments
+    var sAppendNotes="Assigned to Technician.";
+    MainWin.g_form.setValue("comments", sAppendNotes.replace(/(?:\n\n)/g, "\n"));
+
+    MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Assigned to Technician."); 
+ 
+    
+  }
+ 
+}
+
+
+function WorkflowConifer() {
+ 
+  if (isTicketingToolEnv) {
+    var FirstName;
+
+    AppendRunLog("TechnicianAssignmentByAccountJSON[0]['Sys_ID']:" + TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+ 
+    MainWin.g_form.flash("assignment_group", "#00CC00", 0); //Flash
+    MainWin.g_form.setValue("assigned_to", TechnicianAssignmentByAccountJSON[0]['Sys_ID']);
+    //sleep(30000);
+    MainWin.g_form.flash("assigned_to", "#00CC00", 0); //Flash
+   
+    AssignedTo = MainWin.g_form.getReference("assigned_to");
+    FirstName = AssignedTo.first_name;
+    sAssignedTo = AssignedTo.name;
+    sAssignedToEmail = AssignedTo.email;
+
+    sAssGroup = MainWin.g_form.getDisplayBox("assignment_group").value;
+
+    AppendRunLog("Assignment Group:" + sAssGroup);
+
+    sNumber = MainWin.g_form.getValue("number");
+
+    sOpened = MainWin.g_form.getValue("opened_at");
+
+    dSNLoadTime = MainWin.g_loadTime;
+    
+    MainWin.g_form.setValue("state", "2");
+
+    if (sNumber.substr(0, 3) == "INC") {
+      MainWin.g_form.setValue("u_status_summary", "Breakfix" );
+    }
+    else {
+      MainWin.g_form.setValue("u_status_summary", "Request" );
+    }
+
+    MainWin.g_form.setValue("u_my_work_priority", sCodeStamp );
+
+
+     MainWin.g_form.flash("u_my_work_priority", "#00CC00", 0); //Flash
+
+     //Additional comments
+    var sAppendNotes="Assigned to Technician.";
+    MainWin.g_form.setValue("comments", sAppendNotes.replace(/(?:\n\n)/g, "\n"));
+
+    MainWin.g_form.setValue("work_notes", sCodeStamp + "\n- Assigned to Technician."); 
+ 
+    
+  }
+ 
+}
 
 function SendValue(sFieldName, sValue) {
   var sGREEN = "#00C00";
   var sREADONLY_PREFIX = "sys_readonly.";
- 
+  var sSELECTTAG = "SELECT";
 
   if (MainWin.g_form.getControl(sFieldName)) {
     if (MainWin.gel(sREADONLY_PREFIX + MainWin.g_form.getControl(sFieldName).id)) {
